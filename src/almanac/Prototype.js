@@ -7,18 +7,23 @@ import { FISH } from "./data";
 import { I18N, useT } from "./i18n";
 import { ThemeProvider, useTheme } from "./theme";
 import { AnimalsScreen } from "./screens/AnimalsScreen";
+import { ArtifactsScreen } from "./screens/ArtifactsScreen";
 import { CaskCalendarScreen } from "./screens/CaskCalendarScreen";
 import { CaskScreen } from "./screens/CaskScreen";
 import { CompareScreen } from "./screens/CompareScreen";
 import { FishDetailScreen } from "./screens/FishDetailScreen";
 import { FishScreen } from "./screens/FishScreen";
+import { GiftsScreen } from "./screens/GiftsScreen";
 import { HomeScreen } from "./screens/HomeScreen";
+import { MineralsScreen } from "./screens/MineralsScreen";
 import { ProcessScreen } from "./screens/ProcessScreen";
 import { SearchScreen } from "./screens/SearchScreen";
 import { SeedsScreen } from "./screens/SeedsScreen";
+import { usePersistedState } from "./usePersistedState";
 
 const TICK_MS = 500;
 const READY_HOLD_MS = 6000;
+const CASKS_STORAGE_KEY = "ha:casks:v1";
 
 const initialCasks = (now) => [
   {
@@ -67,13 +72,26 @@ function PrototypeShell({ season, setSeason }) {
   const [lang, setLang] = useState("es");
   const [page, setPage] = useState("home");
   const [workshopTab, setWorkshopTab] = useState("process");
+  const [codexTab, setCodexTab] = useState("minerals");
   const [caskView, setCaskView] = useState("list");
   const [selectedFish, setSelectedFish] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [casks, setCasks] = useState(() => initialCasks(Date.now()));
+  const [casks, setCasks, casksHydrated] = usePersistedState(
+    CASKS_STORAGE_KEY,
+    () => initialCasks(Date.now()),
+  );
   const [toasts, setToasts] = useState([]);
   const notifiedRef = useRef(new Set(["seed2"]));
+  const hydrationAppliedRef = useRef(false);
   const t = useT(lang);
+
+  useEffect(() => {
+    if (!casksHydrated || hydrationAppliedRef.current) return;
+    hydrationAppliedRef.current = true;
+    casks.forEach((c) => {
+      if (c.progress >= 1) notifiedRef.current.add(c.uid);
+    });
+  }, [casksHydrated, casks]);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -156,6 +174,11 @@ function PrototypeShell({ season, setSeason }) {
     onBack = () => setPage("fish");
   } else if (page === "animals") {
     body = <AnimalsScreen state={state} />;
+  } else if (page === "codex") {
+    if (codexTab === "minerals") body = <MineralsScreen state={state} />;
+    else if (codexTab === "gifts") body = <GiftsScreen state={state} />;
+    else if (codexTab === "artifacts") body = <ArtifactsScreen state={state} />;
+    hideSeason = true;
   } else if (page === "workshop") {
     if (workshopTab === "process") {
       body = <ProcessScreen state={state} addCask={addCask} />;
@@ -188,6 +211,7 @@ function PrototypeShell({ season, setSeason }) {
   }
 
   const tabPage = page === "fishDetail" ? "fish" : page;
+  const yearRoundActive = page === "codex";
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.bg }}>
@@ -205,6 +229,24 @@ function PrototypeShell({ season, setSeason }) {
         title={screenTitle}
         onBack={onBack}
       />
+
+      {yearRoundActive ? (
+        <YearRoundBanner lang={lang} />
+      ) : null}
+
+      {page === "codex" ? (
+        <View style={{ paddingHorizontal: 12, paddingTop: 8, paddingBottom: 6 }}>
+          <Segmented
+            value={codexTab}
+            onChange={setCodexTab}
+            options={[
+              { id: "minerals",  glyph: "💎", label: t("codexTabs.minerals") },
+              { id: "gifts",     glyph: "🎁", label: t("codexTabs.gifts") },
+              { id: "artifacts", glyph: "🏺", label: t("codexTabs.artifacts") },
+            ]}
+          />
+        </View>
+      ) : null}
 
       {page === "workshop" ? (
         <View style={{ paddingHorizontal: 12, paddingTop: 10, paddingBottom: 6, gap: 8 }}>
@@ -248,6 +290,61 @@ function PrototypeShell({ season, setSeason }) {
         }}
         t={t}
       />
+    </View>
+  );
+}
+
+function YearRoundBanner({ lang }) {
+  const theme = useTheme();
+  return (
+    <View
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+        backgroundColor: theme.surface2,
+        borderBottomWidth: 1,
+        borderBottomColor: theme.line,
+        paddingHorizontal: 14,
+        paddingVertical: 6,
+      }}
+    >
+      <View
+        style={{
+          width: 18,
+          height: 18,
+          borderRadius: 9,
+          backgroundColor: theme.gold,
+          borderWidth: 1.5,
+          borderColor: theme.ink,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Text style={{ fontSize: 10 }}>🌐</Text>
+      </View>
+      <Text
+        style={{
+          fontFamily: "monospace",
+          fontSize: 10,
+          letterSpacing: 1.0,
+          color: theme.ink,
+          textTransform: "uppercase",
+          fontWeight: "700",
+        }}
+      >
+        {I18N[lang].misc.yearRound}
+      </Text>
+      <Text
+        style={{
+          fontFamily: "monospace",
+          fontSize: 10,
+          color: theme.ink2,
+          letterSpacing: 0.4,
+        }}
+      >
+        · {I18N[lang].misc.yearRoundHint}
+      </Text>
     </View>
   );
 }

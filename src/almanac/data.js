@@ -158,6 +158,77 @@ export const RECIPES = {
   },
 };
 
+// ── MINERALS ────────────────────────────────────────────────
+// tier: gem | ore | forage | special
+// action: sell | crystal | smelt | gift | refine | forge
+export const MINERALS = [
+  { id: "diamond",     emoji: "💎", name: { es: "Diamante",         en: "Diamond" },        tier: "gem",     price: 750,  where: { es: "Mina (50+), geodas",        en: "Mines (50+), geodes" },        action: "crystal", note: { es: "★ Mejor en Crystalarium", en: "★ Best in Crystalarium" } },
+  { id: "ruby",        emoji: "❤️", name: { es: "Rubí",             en: "Ruby" },           tier: "gem",     price: 250,  where: { es: "Mina del cráneo, geoda magma", en: "Skull mines, magma geode" },   action: "crystal" },
+  { id: "emerald",     emoji: "💚", name: { es: "Esmeralda",        en: "Emerald" },        tier: "gem",     price: 250,  where: { es: "Mina (80+), geodas",        en: "Mines (80+), geodes" },        action: "crystal" },
+  { id: "topaz",       emoji: "🟧", name: { es: "Topacio",          en: "Topaz" },          tier: "gem",     price: 80,   where: { es: "Mina (5+), geodas",         en: "Mines (5+), geodes" },         action: "forge",   note: { es: "Mejor para anillos / forjas", en: "Best for rings / forging" } },
+  { id: "aquamarine",  emoji: "🟦", name: { es: "Aguamarina",       en: "Aquamarine" },     tier: "gem",     price: 180,  where: { es: "Mina (20+), geodas",        en: "Mines (20+), geodes" },        action: "crystal" },
+  { id: "jade",        emoji: "🟢", name: { es: "Jade",             en: "Jade" },           tier: "gem",     price: 200,  where: { es: "Mina (60+), geodas",        en: "Mines (60+), geodes" },        action: "gift",    note: { es: "🎁 Cambiable por Estrella en feria", en: "🎁 Trade for Star Shards" } },
+  { id: "amethyst",    emoji: "💜", name: { es: "Amatista",         en: "Amethyst" },       tier: "gem",     price: 100,  where: { es: "Mina (1+), geodas",         en: "Mines (1+), geodes" },         action: "crystal" },
+  { id: "iridium",     emoji: "🟣", name: { es: "Iridio",           en: "Iridium Ore" },    tier: "ore",     price: 100,  where: { es: "Mina del cráneo, vulcán",   en: "Skull mines, volcano" },       action: "smelt",   note: { es: "→ Barra ×5 = 1000g", en: "→ Bar ×5 = 1000g" } },
+  { id: "gold",        emoji: "🟡", name: { es: "Oro",              en: "Gold Ore" },       tier: "ore",     price: 25,   where: { es: "Mina (80+)",                en: "Mines (80+)" },                action: "smelt",   note: { es: "→ Barra = 250g", en: "→ Bar = 250g" } },
+  { id: "iron",        emoji: "⚙️", name: { es: "Hierro",           en: "Iron Ore" },       tier: "ore",     price: 10,   where: { es: "Mina (40+)",                en: "Mines (40+)" },                action: "smelt",   note: { es: "→ Barra = 120g", en: "→ Bar = 120g" } },
+  { id: "copper",      emoji: "🟠", name: { es: "Cobre",            en: "Copper Ore" },     tier: "ore",     price: 5,    where: { es: "Mina (1+)",                 en: "Mines (1+)" },                 action: "smelt",   note: { es: "→ Barra = 60g", en: "→ Bar = 60g" } },
+  { id: "quartz",      emoji: "🤍", name: { es: "Cuarzo",           en: "Quartz" },         tier: "forage",  price: 25,   where: { es: "Mina (5+), forrajeo",       en: "Mines (5+), forage" },         action: "refine",  note: { es: "→ Cuarzo refinado en Horno", en: "→ Refined Quartz in furnace" } },
+  { id: "firequartz",  emoji: "🟥", name: { es: "Cuarzo de fuego",  en: "Fire Quartz" },    tier: "forage",  price: 100,  where: { es: "Mina (80+)",                en: "Mines (80+)" },                action: "refine" },
+  { id: "frozentear",  emoji: "🔵", name: { es: "Lágrima helada",   en: "Frozen Tear" },    tier: "forage",  price: 75,   where: { es: "Mina (40+)",                en: "Mines (40+)" },                action: "gift" },
+  { id: "earthcrystal",emoji: "🟫", name: { es: "Cristal de tierra", en: "Earth Crystal" }, tier: "forage",  price: 50,   where: { es: "Mina (1-39), geoda terrestre", en: "Mines (1–39), earth geode" }, action: "sell" },
+  { id: "prismatic",   emoji: "🌈", name: { es: "Fragmento prismático", en: "Prismatic Shard" }, tier: "special", price: 2000, where: { es: "Mina del cráneo, raro",   en: "Skull cavern, very rare" },     action: "gift",    note: { es: "★ Amado por todos · No vender", en: "★ Loved by all · don't sell" } },
+];
+
+// ── GIFTS ───────────────────────────────────────────────────
+// tier: universal (loved by nearly all) | liked | cooked | avoid
+export const GIFTS = [
+  { id: "prismatic",   emoji: "🌈", name: { es: "Fragmento prismático", en: "Prismatic Shard" }, tier: "universal", note: { es: "Lo mejor que existe — guárdalo para regalos", en: "Best gift in the game — save for gifting" } },
+  { id: "pearl",       emoji: "🦪", name: { es: "Perla",            en: "Pearl" },          tier: "universal", note: { es: "Ostras del mar, raro",        en: "From night market or rare drops" } },
+  { id: "rabbitfoot",  emoji: "🐇", name: { es: "Pata de conejo",   en: "Rabbit's Foot" },  tier: "universal", note: { es: "Conejo amistad alta",         en: "High-friendship rabbits" } },
+  { id: "magicrock",   emoji: "🍬", name: { es: "Caramelo mágico",  en: "Magic Rock Candy" }, tier: "universal", note: { es: "Mina del cráneo, raro",   en: "Rare from skull cavern" } },
+  { id: "truffle",     emoji: "🍄", name: { es: "Trufa",            en: "Truffle" },        tier: "universal", note: { es: "Cerdos al pastoreo",          en: "From pigs foraging outside" } },
+  { id: "diamond",     emoji: "💎", name: { es: "Diamante",         en: "Diamond" },        tier: "universal", note: { es: "Crystalarium o mina",         en: "From Crystalarium or mines" } },
+
+  { id: "wine",        emoji: "🍷", name: { es: "Vino (cualquiera)", en: "Wine (any)" },    tier: "liked",     note: { es: "Especialmente Vino de fresa o estrella", en: "Especially Strawberry/Starfruit Wine" } },
+  { id: "coffee",      emoji: "☕", name: { es: "Café",             en: "Coffee" },         tier: "liked",     note: { es: "Frijol de café en deshidratador", en: "From coffee beans" } },
+  { id: "honey",       emoji: "🍯", name: { es: "Miel (de flor)",   en: "Honey (flower)" }, tier: "liked",     note: { es: "Casas de abeja junto a flores", en: "Bee houses next to flowers" } },
+  { id: "anyfruit",    emoji: "🍓", name: { es: "Frutas dulces",    en: "Sweet fruits" },   tier: "liked",     note: { es: "Fresa, melón, arándano, uva", en: "Strawberry, melon, blueberry, grape" } },
+
+  { id: "pumpkinsoup", emoji: "🍲", name: { es: "Sopa de calabaza", en: "Pumpkin Soup" },   tier: "cooked",    note: { es: "Calabaza + Leche",            en: "Pumpkin + Milk" } },
+  { id: "lobsterbisque", emoji: "🦞", name: { es: "Bisque de langosta", en: "Lobster Bisque" }, tier: "cooked", note: { es: "Langosta + Leche",          en: "Lobster + Milk" } },
+  { id: "pancakes",    emoji: "🥞", name: { es: "Tortitas",         en: "Pancakes" },       tier: "cooked",    note: { es: "Harina + Huevo",              en: "Wheat flour + Egg" } },
+  { id: "cheesecauli", emoji: "🥦", name: { es: "Coliflor con queso", en: "Cheese Cauliflower" }, tier: "cooked", note: { es: "Coliflor + Queso",         en: "Cauliflower + Cheese" } },
+
+  { id: "algaesoup",   emoji: "🥣", name: { es: "Sopa de algas",    en: "Algae Soup" },     tier: "avoid",     note: { es: "Casi todos la odian",         en: "Almost everyone hates it" } },
+  { id: "holly",       emoji: "🌿", name: { es: "Acebo",            en: "Holly" },          tier: "avoid",     note: { es: "Forrajeo invierno — odiado",  en: "Winter forage — hated" } },
+  { id: "rawquartz",   emoji: "🤍", name: { es: "Cuarzo crudo",     en: "Quartz" },         tier: "avoid",     note: { es: "Casi todos lo odian sin pulir", en: "Hated raw — refine first" } },
+  { id: "trash",       emoji: "🗑️", name: { es: "Basura / pesca floja", en: "Trash / junk fish" }, tier: "avoid", note: { es: "Obvio, pero no lo intentes", en: "Obvious, don't even try" } },
+];
+
+// ── ARTIFACTS ───────────────────────────────────────────────
+// rec: donate | sell | both | keep
+export const ARTIFACTS = [
+  { id: "dwarf1",      emoji: "📜", name: { es: "Pergamino enano I",  en: "Dwarf Scroll I" },   price: 50,   where: { es: "Excavar en mina (1-19)",      en: "Dig in mines (1–19)" },          rec: "both",   note: { es: "Donar primero, vender duplicados", en: "Donate first, sell dupes" } },
+  { id: "dwarf2",      emoji: "📜", name: { es: "Pergamino enano II", en: "Dwarf Scroll II" },  price: 100,  where: { es: "Mina (20-79), monstruos",     en: "Mines (20–79), monsters" },      rec: "both" },
+  { id: "dwarf3",      emoji: "📜", name: { es: "Pergamino enano III", en: "Dwarf Scroll III" }, price: 250, where: { es: "Mina del cráneo",             en: "Skull cavern" },                 rec: "both" },
+  { id: "dwarf4",      emoji: "📜", name: { es: "Pergamino enano IV", en: "Dwarf Scroll IV" },  price: 500,  where: { es: "Mina del cráneo, raro",        en: "Skull cavern, rare" },           rec: "both" },
+  { id: "ancientseed", emoji: "🌰", name: { es: "Semilla antigua",   en: "Ancient Seed" },     price: 5,    where: { es: "Excavar, monstruos antiguos", en: "Dig, ancient monsters" },        rec: "keep",   note: { es: "★ Donar 1, plantar resto → Fruta antigua (mejor para vino)", en: "★ Donate 1, plant the rest → Ancient Fruit (best for wine)" } },
+  { id: "dinoegg",     emoji: "🥚", name: { es: "Huevo de dinosaurio", en: "Dinosaur Egg" },   price: 350,  where: { es: "Excavar tundra, dino fósil",  en: "Dig tundra, dino remains" },     rec: "keep",   note: { es: "★ Incubar → Dinosaurio → Mayonesa de dino (800g)", en: "★ Incubate → Dinosaur → Dino Mayo (800g)" } },
+  { id: "amphora",     emoji: "🏺", name: { es: "Ánfora rota",       en: "Chipped Amphora" },  price: 100,  where: { es: "Excavar (parche)",            en: "Dig (artifact spot)" },          rec: "both" },
+  { id: "arrowhead",   emoji: "🔻", name: { es: "Punta de flecha",   en: "Arrowhead" },        price: 100,  where: { es: "Excavar (mte/playa)",         en: "Dig (mountain/beach)" },         rec: "both" },
+  { id: "ancientdoll", emoji: "🪆", name: { es: "Muñeca antigua",    en: "Ancient Doll" },     price: 100,  where: { es: "Excavar, monstruos",          en: "Dig, monsters" },                rec: "both" },
+  { id: "elvish",      emoji: "💍", name: { es: "Joya élfica",       en: "Elvish Jewelry" },   price: 200,  where: { es: "Excavar bosque",              en: "Dig forest" },                   rec: "both" },
+  { id: "fan",         emoji: "🪭", name: { es: "Abanico ornamental", en: "Ornamental Fan" }, price: 300,  where: { es: "Excavar playa, geoda",        en: "Dig beach, geode" },             rec: "both" },
+  { id: "raredisc",    emoji: "🥏", name: { es: "Disco raro",        en: "Rare Disc" },        price: 300,  where: { es: "Excavar, monstruos",          en: "Dig, monsters" },                rec: "both" },
+  { id: "goldmask",    emoji: "👑", name: { es: "Máscara dorada",    en: "Golden Mask" },      price: 500,  where: { es: "Excavar desierto",            en: "Dig desert" },                   rec: "both" },
+  { id: "goldrelic",   emoji: "🏆", name: { es: "Reliquia dorada",   en: "Golden Relic" },     price: 500,  where: { es: "Excavar desierto",            en: "Dig desert" },                   rec: "both" },
+  { id: "strangedoll", emoji: "🎎", name: { es: "Muñeca extraña",    en: "Strange Doll" },     price: 1000, where: { es: "Pesca de basura, raro",       en: "Trash fishing, rare" },          rec: "donate", note: { es: "Solo se vende a 1000g si ya donaste", en: "Sells 1000g only after donating" } },
+  { id: "rustyspoon",  emoji: "🥄", name: { es: "Cuchara oxidada",   en: "Rusty Spoon" },      price: 25,   where: { es: "Pesca de basura",             en: "Trash from fishing" },           rec: "donate" },
+  { id: "rustycog",    emoji: "⚙️", name: { es: "Engranaje oxidado", en: "Rusty Cog" },        price: 25,   where: { es: "Pesca de basura",             en: "Trash from fishing" },           rec: "donate" },
+  { id: "fossil",      emoji: "🦴", name: { es: "Fósiles (varios)",  en: "Fossils (various)" }, price: 100, where: { es: "Excavar tundra/desierto",     en: "Dig tundra/desert" },            rec: "donate", note: { es: "Set completo → recompensa Curador", en: "Full set → curator reward" } },
+];
+
 export function cropProfitPerDay(crop) {
   const SEASON_LEN = 28;
   if (crop.days === 0) return 0;
