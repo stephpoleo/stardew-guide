@@ -215,7 +215,7 @@ function PrototypeShell({ season, setSeason }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.bg }}>
-      <ToastStack toasts={toasts} onDismiss={dismissToast} platform={Platform.OS} />
+      <ToastStack toasts={toasts} onDismiss={dismissToast} platform={Platform.OS} appName={t("appName")} />
 
       <CompactHeader
         lang={lang}

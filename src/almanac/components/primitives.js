@@ -333,7 +333,7 @@ export function EmptyState({ glyph = "🌾", title, hint }) {
   );
 }
 
-function Toast({ toast, onDismiss, platform }) {
+function Toast({ toast, onDismiss, platform, appName = "Diario del Granjero" }) {
   const t = useTheme();
   const slide = useRef(new Animated.Value(-20)).current;
   const opacity = useRef(new Animated.Value(0)).current;
@@ -393,7 +393,7 @@ function Toast({ toast, onDismiss, platform }) {
               textTransform: "uppercase",
             }}
           >
-            🌾 HARVEST ALMANAC · {toast.time || "now"}
+            🍓 {appName.toUpperCase()} · {toast.time || "now"}
           </Text>
           <Text style={{ fontSize: 12, fontWeight: "700", color: "#fff", marginTop: 2 }}>
             {toast.title}
@@ -407,7 +407,7 @@ function Toast({ toast, onDismiss, platform }) {
   );
 }
 
-export function ToastStack({ toasts, onDismiss, platform = "ios" }) {
+export function ToastStack({ toasts, onDismiss, platform = "ios", appName }) {
   if (!toasts.length) return null;
   return (
     <View
@@ -422,7 +422,7 @@ export function ToastStack({ toasts, onDismiss, platform = "ios" }) {
       }}
     >
       {toasts.map((tt) => (
-        <Toast key={tt.id} toast={tt} onDismiss={onDismiss} platform={platform} />
+        <Toast key={tt.id} toast={tt} onDismiss={onDismiss} platform={platform} appName={appName} />
       ))}
     </View>
   );
