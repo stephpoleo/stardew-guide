@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Platform, View } from "react-native";
+import { Platform, Text, View } from "react-native";
 import { CompactHeader } from "./components/CompactHeader";
 import { TabBar } from "./components/TabBar";
 import { Segmented, ToastStack } from "./components/primitives";

@@ -10,7 +10,7 @@ export function TabBar({ page, setPage, t }) {
     { id: "seeds",    label: t("nav.seeds"),    glyph: "🌱", matches: ["seeds"] },
     { id: "fish",     label: t("nav.fish"),     glyph: "🎣", matches: ["fish", "fishDetail"] },
     { id: "animals",  label: t("nav.animals"),  glyph: "🐄", matches: ["animals"] },
-    { id: "codex",    label: t("nav.codex"),    glyph: "📖", matches: ["codex", "minerals", "gifts", "artifacts"] },
+    { id: "codex",    label: t("nav.codex"),    glyph: "🏪", matches: ["codex", "minerals", "gifts", "artifacts"] },
     { id: "workshop", label: t("nav.workshop"), glyph: "🛠️", matches: ["workshop", "process", "cask", "compare"] },
   ];
   return (
