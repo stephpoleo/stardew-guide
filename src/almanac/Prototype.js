@@ -16,9 +16,11 @@ import { HomeScreen } from "./screens/HomeScreen";
 import { ProcessScreen } from "./screens/ProcessScreen";
 import { SearchScreen } from "./screens/SearchScreen";
 import { SeedsScreen } from "./screens/SeedsScreen";
+import { usePersistedState } from "./usePersistedState";
 
 const TICK_MS = 500;
 const READY_HOLD_MS = 6000;
+const CASKS_STORAGE_KEY = "ha:casks:v1";
 
 const initialCasks = (now) => [
   {
@@ -70,10 +72,22 @@ function PrototypeShell({ season, setSeason }) {
   const [caskView, setCaskView] = useState("list");
   const [selectedFish, setSelectedFish] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [casks, setCasks] = useState(() => initialCasks(Date.now()));
+  const [casks, setCasks, casksHydrated] = usePersistedState(
+    CASKS_STORAGE_KEY,
+    () => initialCasks(Date.now()),
+  );
   const [toasts, setToasts] = useState([]);
   const notifiedRef = useRef(new Set(["seed2"]));
+  const hydrationAppliedRef = useRef(false);
   const t = useT(lang);
+
+  useEffect(() => {
+    if (!casksHydrated || hydrationAppliedRef.current) return;
+    hydrationAppliedRef.current = true;
+    casks.forEach((c) => {
+      if (c.progress >= 1) notifiedRef.current.add(c.uid);
+    });
+  }, [casksHydrated, casks]);
 
   useEffect(() => {
     const id = setInterval(() => {
