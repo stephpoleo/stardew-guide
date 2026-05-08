@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Animated, Image, Pressable, Text, TextInput, View } from "react-native";
-import { SPRITES } from "../sprites";
+import { Animated, Pressable, Text, TextInput, View } from "react-native";
 import { useTheme } from "../theme";
 
 const PIXEL = "monospace";
@@ -90,14 +89,12 @@ export function Chip({ children, tone = "neutral", style }) {
 }
 
 export function PixelSprite({ id = "x", color = "#b9d46a", emoji, size = 32, bg }) {
-  const sprite = SPRITES[id];
-  const tileBg = bg || (sprite ? "rgba(255,250,234,0.85)" : color + "55");
   return (
     <View
       style={{
         width: size,
         height: size,
-        backgroundColor: tileBg,
+        backgroundColor: bg || color + "55",
         borderWidth: 1,
         borderColor: "rgba(0,0,0,0.18)",
         borderRadius: 2,
@@ -107,32 +104,20 @@ export function PixelSprite({ id = "x", color = "#b9d46a", emoji, size = 32, bg 
         overflow: "hidden",
       }}
     >
-      {sprite ? (
-        <Image
-          source={sprite}
-          resizeMode="contain"
-          style={{ width: size, height: size }}
-          // Pixel-art crispness: avoid bilinear smoothing where the runtime supports it.
-          fadeDuration={0}
-        />
-      ) : (
-        <>
-          <View
-            style={{
-              position: "absolute",
-              left: 0,
-              top: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: color,
-              opacity: 0.35,
-            }}
-          />
-          {emoji ? (
-            <Text style={{ fontSize: size * 0.58, lineHeight: size * 0.7 }}>{emoji}</Text>
-          ) : null}
-        </>
-      )}
+      <View
+        style={{
+          position: "absolute",
+          left: 0,
+          top: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: color,
+          opacity: 0.35,
+        }}
+      />
+      {emoji ? (
+        <Text style={{ fontSize: size * 0.58, lineHeight: size * 0.7 }}>{emoji}</Text>
+      ) : null}
     </View>
   );
 }

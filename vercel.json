@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "node scripts/make-icon.js && node scripts/make-sprites.js && npx expo export --platform web && node scripts/post-build.js",
+  "buildCommand": "node scripts/make-icon.js && npx expo export --platform web && node scripts/post-build.js",
   "outputDirectory": "dist",
   "installCommand": "npm install",
   "framework": null,
