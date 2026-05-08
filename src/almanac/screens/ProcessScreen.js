@@ -16,6 +16,51 @@ export function ProcessScreen({ state, addCask }) {
   const recipes = RECIPES[machineId] || {};
 
   const items = useMemo(() => {
+    if (machineId === "cask") {
+      // Cask ages already-fermented products (wines from kegs + cheeses).
+      // RECIPES.cask uses parent-relative ids that don't exist in CROPS,
+      // so build the list from the outputs of keg + cheese instead.
+      const wines = Object.entries(RECIPES.keg)
+        .filter(([, r]) => r.mult >= 3)
+        .map(([cropId, r]) => {
+          const crop = CROPS.find((c) => c.id === cropId);
+          const winePrice = crop ? Math.round(crop.sellPrice * r.mult) : 100;
+          return {
+            key: `aged_${cropId}`,
+            src: {
+              id: cropId,
+              name: r.out,
+              emoji: "🍷",
+              sellPrice: winePrice,
+              color: crop?.color,
+            },
+            r: {
+              out: {
+                es: `${r.out.es} iridio`,
+                en: `Iridium ${r.out.en}`,
+              },
+              mult: 2,
+              hours: 56 * 24,
+            },
+          };
+        });
+      const cheeses = Object.entries(RECIPES.cheese).map(([k, r]) => ({
+        key: `aged_${k}`,
+        src: {
+          id: k,
+          name: r.out,
+          emoji: "🧀",
+          sellPrice: r.flat || 230,
+          color: "#fde7a8",
+        },
+        r: {
+          out: { es: `${r.out.es} iridio`, en: `Iridium ${r.out.en}` },
+          mult: 2,
+          hours: 56 * 24,
+        },
+      }));
+      return [...wines, ...cheeses];
+    }
     const products = ANIMALS.flatMap((a) => a.produces);
     return Object.keys(recipes)
       .map((k) => {
