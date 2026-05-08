@@ -40,7 +40,7 @@ const PWA_TAGS = [
   '<meta name="theme-color" content="#2b2216" />',
   '<meta name="apple-mobile-web-app-capable" content="yes" />',
   '<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />',
-  '<meta name="apple-mobile-web-app-title" content="Almanac" />',
+  '<meta name="apple-mobile-web-app-title" content="Diario" />',
   '<link rel="apple-touch-icon" href="/icon.png" />',
 ].join("\n  ");
 
@@ -51,5 +51,5 @@ if (html.includes("manifest.webmanifest")) {
   html = html.replace(/<\/head>/i, `  ${PWA_TAGS}\n</head>`);
   console.log("post-build: injected PWA tags into dist/index.html");
 }
-html = html.replace(/<title>[^<]*<\/title>/i, "<title>Harvest Almanac</title>");
+html = html.replace(/<title>[^<]*<\/title>/i, "<title>Diario del Granjero</title>");
 fs.writeFileSync(indexPath, html);

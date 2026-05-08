@@ -2,7 +2,7 @@ import { useCallback } from "react";
 
 export const I18N = {
   es: {
-    appName: "Harvest Almanac",
+    appName: "Diario del Granjero",
     greeting: "Buenos días, granjero",
     season: { spring: "Primavera", summer: "Verano", fall: "Otoño", winter: "Invierno" },
     seasonShort: { spring: "Prim", summer: "Ver", fall: "Oto", winter: "Inv" },
@@ -136,7 +136,7 @@ export const I18N = {
     },
   },
   en: {
-    appName: "Harvest Almanac",
+    appName: "Farmer's Diary",
     greeting: "Good morning, farmer",
     season: { spring: "Spring", summer: "Summer", fall: "Fall", winter: "Winter" },
     seasonShort: { spring: "Spr", summer: "Sum", fall: "Fall", winter: "Win" },

@@ -1,7 +1,7 @@
 {
-  "name": "Harvest Almanac",
-  "short_name": "Almanac",
-  "description": "Pixel-art guide for crops, fish, animals, and trade.",
+  "name": "Diario del Granjero",
+  "short_name": "Diario",
+  "description": "Guía pixel-art de cultivos, peces, animales, mercado y barricas.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
