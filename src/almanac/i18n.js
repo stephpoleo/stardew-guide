@@ -13,7 +13,7 @@ export const I18N = {
     gperday: "g/día",
     seedCost: "semilla",
     price: "precio",
-    nav: { home: "Inicio", seeds: "Semillas", fish: "Peces", animals: "Granja", codex: "Códex", workshop: "Taller" },
+    nav: { home: "Inicio", seeds: "Semillas", fish: "Peces", animals: "Granja", codex: "Mercado", workshop: "Taller" },
     workshopTabs: { process: "Recetas", cask: "Barricas", compare: "Comparar" },
     codexTabs: { minerals: "Minerales", gifts: "Regalos", artifacts: "Artefactos" },
     minerals: {
@@ -147,7 +147,7 @@ export const I18N = {
     gperday: "g/day",
     seedCost: "seed",
     price: "price",
-    nav: { home: "Home", seeds: "Seeds", fish: "Fish", animals: "Farm", codex: "Codex", workshop: "Shop" },
+    nav: { home: "Home", seeds: "Seeds", fish: "Fish", animals: "Farm", codex: "Market", workshop: "Shop" },
     workshopTabs: { process: "Recipes", cask: "Casks", compare: "Compare" },
     codexTabs: { minerals: "Minerals", gifts: "Gifts", artifacts: "Artifacts" },
     minerals: {
