@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
+import { progressFor } from "../calendar";
 import { CardPixel, Chip, Coin, PixelSprite, ProgressBar, pixelShadow } from "../components/primitives";
 import { CROPS, FISH, cropProfitPerDay } from "../data";
 import { useT } from "../i18n";
@@ -8,17 +9,19 @@ import { useTheme } from "../theme";
 const PIXEL = "monospace";
 
 export function HomeScreen({ state, setPage, goToWorkshop }) {
-  const { lang, season, casks } = state;
+  const { lang, season, casks, currentAbsDay } = state;
   const t = useT(lang);
   const theme = useTheme();
 
   const { topCrop, topFish, readyCasks, activeCasks } = useMemo(() => {
-    const seasonCrops = CROPS.filter((c) => c.season === season && c.days > 0);
+    const seasonCrops = CROPS.filter(
+      (c) => (c.season === season || c.season === "all") && c.days > 0,
+    );
     const tc = [...seasonCrops].sort((a, b) => cropProfitPerDay(b) - cropProfitPerDay(a))[0];
     const tf = FISH.filter((f) => f.seasons.includes(season)).sort((a, b) => b.price - a.price)[0];
-    const ready = casks.filter((c) => c.progress >= 1).length;
+    const ready = casks.filter((c) => progressFor(c, currentAbsDay) >= 1).length;
     return { topCrop: tc, topFish: tf, readyCasks: ready, activeCasks: casks.length };
-  }, [season, casks]);
+  }, [season, casks, currentAbsDay]);
 
   return (
     <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 14, gap: 14 }}>
@@ -160,7 +163,7 @@ export function HomeScreen({ state, setPage, goToWorkshop }) {
           ) : null}
         </View>
         {casks.slice(0, 2).map((c) => (
-          <CaskMiniBar key={c.uid} cask={c} lang={lang} />
+          <CaskMiniBar key={c.uid} cask={c} lang={lang} currentAbsDay={currentAbsDay} />
         ))}
       </CardPixel>
 
@@ -237,10 +240,11 @@ export function HomeScreen({ state, setPage, goToWorkshop }) {
   );
 }
 
-function CaskMiniBar({ cask, lang }) {
+function CaskMiniBar({ cask, lang, currentAbsDay }) {
   const theme = useTheme();
-  const pct = Math.min(1, cask.progress) * 100;
-  const done = cask.progress >= 1;
+  const p = progressFor(cask, currentAbsDay);
+  const pct = p * 100;
+  const done = p >= 1;
   return (
     <View style={{ marginTop: 8 }}>
       <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 3 }}>

@@ -93,6 +93,8 @@ export const I18N = {
       viewCal: "Calendario",
       monthView: "Mes",
       today: "Hoy",
+      started: "Empezó",
+      readyOn: "Listo el",
     },
     compare: { title: "Crudo vs procesado", raw: "Crudo", each: "/u", bestOf: "Mejor para", empty: "Nada que comparar en invierno." },
     home: {
@@ -133,6 +135,7 @@ export const I18N = {
       searchTitle: "Buscar",
       yearRound: "Todo el año",
       yearRoundHint: "No depende de la temporada",
+      yearShort: "a",
     },
   },
   en: {
@@ -227,6 +230,8 @@ export const I18N = {
       viewCal: "Calendar",
       monthView: "Month",
       today: "Today",
+      started: "Started",
+      readyOn: "Ready on",
     },
     compare: { title: "Raw vs processed", raw: "Raw", each: "/ea", bestOf: "Best use", empty: "Nothing to compare in winter." },
     home: {
@@ -267,6 +272,7 @@ export const I18N = {
       searchTitle: "Search",
       yearRound: "Year-round",
       yearRoundHint: "Season-independent",
+      yearShort: "y",
     },
   },
 };

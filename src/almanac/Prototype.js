@@ -1,5 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Platform, Text, View } from "react-native";
+import {
+  CASK_DURATION_DAYS,
+  fromAbsDay,
+  progressFor,
+  toAbsDay,
+} from "./calendar";
 import { CompactHeader } from "./components/CompactHeader";
 import { TabBar } from "./components/TabBar";
 import { Segmented, ToastStack } from "./components/primitives";
@@ -21,40 +27,41 @@ import { SearchScreen } from "./screens/SearchScreen";
 import { SeedsScreen } from "./screens/SeedsScreen";
 import { usePersistedState } from "./usePersistedState";
 
-const TICK_MS = 500;
 const READY_HOLD_MS = 6000;
-const CASKS_STORAGE_KEY = "ha:casks:v1";
+const CASKS_STORAGE_KEY = "ha:casks:v2";
+const CURRENT_DAY_STORAGE_KEY = "ha:dayOfSeason:v1";
+const DEFAULT_DAY = 14;
 
-const initialCasks = (now) => [
+const initialCasks = (currentAbsDay) => [
+  // Three seed casks with staggered start days so the user sees the bar at
+  // different positions on first open. Picked relative to the default day so
+  // a fresh install on default settings shows: aging silver, ready, just-started.
   {
     uid: "seed1",
     itemId: "grape",
-    label: { es: "Vino tinto", en: "Grape Wine" },
-    basePrice: 80,
-    mult: 3,
-    startTime: now - 22000,
-    durationMs: 60000,
-    progress: 22 / 60,
+    label: { es: "Vino tinto iridio", en: "Iridium Grape Wine" },
+    basePrice: 240,
+    mult: 2,
+    startAbsDay: currentAbsDay - 20,
+    durationDays: CASK_DURATION_DAYS,
   },
   {
     uid: "seed2",
     itemId: "cheese",
-    label: { es: "Queso dorado", en: "Iridium Cheese" },
+    label: { es: "Queso iridio", en: "Iridium Cheese" },
     basePrice: 230,
     mult: 2,
-    startTime: now - 65000,
-    durationMs: 60000,
-    progress: 1,
+    startAbsDay: currentAbsDay - CASK_DURATION_DAYS,
+    durationDays: CASK_DURATION_DAYS,
   },
   {
     uid: "seed3",
     itemId: "starfruit",
-    label: { es: "Vino estrella", en: "Starfruit Wine" },
-    basePrice: 750,
-    mult: 3,
-    startTime: now - 8000,
-    durationMs: 60000,
-    progress: 8 / 60,
+    label: { es: "Vino estrella iridio", en: "Iridium Starfruit Wine" },
+    basePrice: 2250,
+    mult: 2,
+    startAbsDay: currentAbsDay - 4,
+    durationDays: CASK_DURATION_DAYS,
   },
 ];
 
@@ -76,12 +83,14 @@ function PrototypeShell({ season, setSeason }) {
   const [caskView, setCaskView] = useState("list");
   const [selectedFish, setSelectedFish] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentDay, setCurrentDay] = usePersistedState(CURRENT_DAY_STORAGE_KEY, DEFAULT_DAY);
+  const currentAbsDay = useMemo(() => toAbsDay(season, currentDay), [season, currentDay]);
   const [casks, setCasks, casksHydrated] = usePersistedState(
     CASKS_STORAGE_KEY,
-    () => initialCasks(Date.now()),
+    () => initialCasks(toAbsDay("spring", DEFAULT_DAY)),
   );
   const [toasts, setToasts] = useState([]);
-  const notifiedRef = useRef(new Set(["seed2"]));
+  const notifiedRef = useRef(new Set());
   const hydrationAppliedRef = useRef(false);
   const t = useT(lang);
 
@@ -89,30 +98,17 @@ function PrototypeShell({ season, setSeason }) {
     if (!casksHydrated || hydrationAppliedRef.current) return;
     hydrationAppliedRef.current = true;
     casks.forEach((c) => {
-      if (c.progress >= 1) notifiedRef.current.add(c.uid);
+      if (progressFor(c, currentAbsDay) >= 1) notifiedRef.current.add(c.uid);
     });
-  }, [casksHydrated, casks]);
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setCasks((prev) =>
-        prev.map((c) => {
-          if (c.progress >= 1) return c;
-          const elapsed = Date.now() - c.startTime;
-          const p = Math.min(1, elapsed / c.durationMs);
-          return { ...c, progress: p };
-        }),
-      );
-    }, TICK_MS);
-    return () => clearInterval(id);
-  }, []);
+  }, [casksHydrated, casks, currentAbsDay]);
 
   useEffect(() => {
     casks.forEach((c) => {
-      if (c.progress >= 1 && !notifiedRef.current.has(c.uid)) {
+      const p = progressFor(c, currentAbsDay);
+      if (p >= 1 && !notifiedRef.current.has(c.uid)) {
         notifiedRef.current.add(c.uid);
         const id = "t" + Date.now() + Math.random().toString(36).slice(2, 5);
-        const finalPrice = Math.round(c.basePrice * (c.mult || 1) * 2);
+        const finalPrice = Math.round(c.basePrice * (c.mult || 1));
         const { title, body } = I18N[lang].misc.readyToast(c.label[lang], finalPrice);
         setToasts((prev) => [
           ...prev,
@@ -123,10 +119,19 @@ function PrototypeShell({ season, setSeason }) {
         }, READY_HOLD_MS);
       }
     });
-  }, [casks, lang]);
+  }, [casks, currentAbsDay, lang]);
 
-  const addCask = (cask) => {
-    setCasks((prev) => [cask, ...prev]);
+  const addCask = (item) => {
+    const newCask = {
+      uid: "c" + Date.now() + Math.random().toString(36).slice(2, 6),
+      itemId: item.itemId,
+      label: item.label,
+      basePrice: item.basePrice,
+      mult: item.mult || 2,
+      startAbsDay: currentAbsDay,
+      durationDays: CASK_DURATION_DAYS,
+    };
+    setCasks((prev) => [newCask, ...prev]);
     setPage("workshop");
     setWorkshopTab("cask");
     setCaskView("list");
@@ -137,7 +142,7 @@ function PrototypeShell({ season, setSeason }) {
   };
   const dismissToast = (id) => setToasts((prev) => prev.filter((x) => x.id !== id));
 
-  const state = { lang, season, casks };
+  const state = { lang, season, currentDay, currentAbsDay, casks };
   const goToWorkshop = (tab) => {
     setPage("workshop");
     if (tab) setWorkshopTab(tab);
@@ -222,6 +227,8 @@ function PrototypeShell({ season, setSeason }) {
         setLang={setLang}
         season={season}
         setSeason={setSeason}
+        currentDay={currentDay}
+        setCurrentDay={setCurrentDay}
         t={t}
         onSearchClick={() => setPage("search")}
         searchActive={page === "search"}

@@ -18,6 +18,8 @@ export const CROPS = [
   { id: "sweetgem",    emoji: "💎", name: { es: "Gema dulce",   en: "Sweet Gem" },      season: "fall",   days: 24, regrow: 0, seedCost: 1000, sellPrice: 3000, color: "#a060c0" },
   { id: "wintroot",    emoji: "🥕", name: { es: "Raíz invernal", en: "Wintroot" },      season: "winter", days: 0,  regrow: 0, seedCost: 0,    sellPrice: 70,   color: "#c2a070",
     note: { es: "Se obtiene cavando", en: "Forage by digging" } },
+  { id: "ancient",     emoji: "🍇", name: { es: "Fruta antigua", en: "Ancient Fruit" }, season: "all",    days: 28, regrow: 7, seedCost: 0,    sellPrice: 550,  color: "#7a4a9c",
+    note: { es: "Crece en cualquier estación una vez plantada", en: "Once grown, regrows every 7 days in any season" } },
 ];
 
 export const FISH = [
@@ -131,6 +133,7 @@ export const RECIPES = {
     melon:      { out: { es: "Vino melón",    en: "Melon Wine" },      mult: 3,    hours: 168 },
     grape:      { out: { es: "Vino tinto",    en: "Grape Wine" },      mult: 3,    hours: 168 },
     cranberry:  { out: { es: "Vino rojo",     en: "Cranberry Wine" },  mult: 3,    hours: 168 },
+    ancient:    { out: { es: "Vino antiguo",  en: "Ancient Fruit Wine" }, mult: 3, hours: 168 },
     pumpkin:    { out: { es: "Zumo calabaza", en: "Pumpkin Juice" },   mult: 2.25, hours: 96 },
     potato:     { out: { es: "Aguardiente",   en: "Potato Spirits" },  mult: 2.25, hours: 96 },
     hops:       { out: { es: "Cerveza pale",  en: "Pale Ale" },        flat: 300,  hours: 35 },
