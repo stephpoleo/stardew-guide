@@ -14,7 +14,9 @@ export function SeedsScreen({ state }) {
   const [sort, setSort] = useState("profit");
 
   const list = useMemo(() => {
-    const arr = CROPS.filter((c) => c.season === season && c.days > 0);
+    const arr = CROPS.filter(
+      (c) => (c.season === season || c.season === "all") && c.days > 0,
+    );
     if (sort === "profit") arr.sort((a, b) => cropProfitPerDay(b) - cropProfitPerDay(a));
     else if (sort === "price") arr.sort((a, b) => b.sellPrice - a.sellPrice);
     else arr.sort((a, b) => a.days - b.days);

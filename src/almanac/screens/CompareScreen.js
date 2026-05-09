@@ -11,7 +11,9 @@ export function CompareScreen({ state }) {
   const t = useT(lang);
   const theme = useTheme();
 
-  const seasonCrops = CROPS.filter((c) => c.season === season && c.days > 0);
+  const seasonCrops = CROPS.filter(
+    (c) => (c.season === season || c.season === "all") && c.days > 0,
+  );
   const rows = seasonCrops.map((c) => {
     const keg = RECIPES.keg[c.id];
     const pres = RECIPES.preserves[c.id];

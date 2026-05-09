@@ -1,4 +1,11 @@
 import { ScrollView, Text, View } from "react-native";
+import {
+  DAYS_PER_SEASON,
+  fromAbsDay,
+  progressFor,
+  readyAbsDay,
+  toAbsDay,
+} from "../calendar";
 import { pixelShadow } from "../components/primitives";
 import { I18N, useT } from "../i18n";
 import { useTheme } from "../theme";
@@ -6,24 +13,28 @@ import { useTheme } from "../theme";
 const PIXEL = "monospace";
 
 export function CaskCalendarScreen({ state }) {
-  const { lang, casks, season } = state;
+  const { lang, casks, season, currentDay, currentAbsDay } = state;
   const t = useT(lang);
   const theme = useTheme();
-  const TODAY = 14;
-  const MONTH_DAYS = 28;
-  const eventsByDay = {};
-  casks.forEach((c) => {
-    const remainPct = Math.max(0, 1 - c.progress);
-    const daysFromNow = Math.ceil(remainPct * 14);
-    const day = Math.min(MONTH_DAYS, TODAY + daysFromNow);
-    if (!eventsByDay[day]) eventsByDay[day] = [];
-    eventsByDay[day].push(c);
-  });
-
-  const seasonGlyph = { spring: "🌸", summer: "☀️", fall: "🍂", winter: "❄️" }[season];
   const misc = I18N[lang].misc;
+  const seasonGlyph = { spring: "🌸", summer: "☀️", fall: "🍂", winter: "❄️" }[season];
 
-  const cellSize = 40; // approximate; uses flex 1
+  // For each cask, figure out where its ready day lands. If it falls inside the
+  // currently visible season, key it by day-of-season for the grid. Otherwise
+  // include it in an "other months" bucket for the upcoming list.
+  const readyInThisSeason = {};
+  const readyElsewhere = [];
+  casks.forEach((c) => {
+    const ready = readyAbsDay(c);
+    const info = fromAbsDay(ready);
+    if (info.season === season && info.yearOffset === 0) {
+      if (!readyInThisSeason[info.day]) readyInThisSeason[info.day] = [];
+      readyInThisSeason[info.day].push(c);
+    } else {
+      readyElsewhere.push({ cask: c, info, ready });
+    }
+  });
+  readyElsewhere.sort((a, b) => a.ready - b.ready);
 
   return (
     <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 14, gap: 12 }}>
@@ -32,7 +43,7 @@ export function CaskCalendarScreen({ state }) {
           {t("cask.monthView")}
         </Text>
         <Text style={{ fontFamily: PIXEL, fontSize: 11, color: theme.ink2 }}>
-          {seasonGlyph} {t(`season.${season}`)}
+          {seasonGlyph} {t(`season.${season}`)} · {t("day")} {currentDay}
         </Text>
       </View>
 
@@ -55,24 +66,25 @@ export function CaskCalendarScreen({ state }) {
       </View>
 
       <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-        {Array.from({ length: MONTH_DAYS }, (_, i) => {
+        {Array.from({ length: DAYS_PER_SEASON }, (_, i) => {
           const day = i + 1;
-          const isToday = day === TODAY;
-          const isPast = day < TODAY;
-          const events = eventsByDay[day] || [];
-          const hasReady =
-            events.some((e) => e.progress >= 1) ||
-            (day === TODAY && casks.some((c) => c.progress >= 1));
+          const dayAbs = toAbsDay(season, day);
+          const isToday = day === currentDay;
+          const isPast = dayAbs < currentAbsDay;
+          const readyEvents = readyInThisSeason[day] || [];
+          // Also mark days where casks are mid-aging that pass through
+          const agingCount = casks.reduce((acc, c) => {
+            if (dayAbs > c.startAbsDay && dayAbs < readyAbsDay(c)) return acc + 1;
+            return acc;
+          }, 0);
           return (
             <View
               key={day}
-              style={[
-                {
-                  width: `${100 / 7}%`,
-                  aspectRatio: 1,
-                  padding: 1.5,
-                },
-              ]}
+              style={{
+                width: `${100 / 7}%`,
+                aspectRatio: 1,
+                padding: 1.5,
+              }}
             >
               <View
                 style={[
@@ -82,7 +94,7 @@ export function CaskCalendarScreen({ state }) {
                     borderWidth: isToday ? 2 : 1,
                     borderColor: isToday ? theme.accent : theme.line,
                     padding: 3,
-                    opacity: isPast ? 0.5 : 1,
+                    opacity: isPast ? 0.55 : 1,
                   },
                   isToday ? pixelShadow(theme.ink, 2) : null,
                 ]}
@@ -98,7 +110,7 @@ export function CaskCalendarScreen({ state }) {
                 >
                   {day}
                 </Text>
-                {events.length > 0 ? (
+                {readyEvents.length > 0 ? (
                   <View
                     style={{
                       flexDirection: "row",
@@ -107,32 +119,28 @@ export function CaskCalendarScreen({ state }) {
                       flexWrap: "wrap",
                     }}
                   >
-                    {events.slice(0, 3).map((e, idx) => (
+                    {readyEvents.slice(0, 3).map((c, idx) => (
                       <View
                         key={idx}
                         style={{
                           width: 6,
                           height: 6,
-                          backgroundColor: e.progress >= 1 ? theme.accent : theme.gold,
+                          backgroundColor: theme.accent,
                           borderWidth: 1,
                           borderColor: theme.ink,
                         }}
                       />
                     ))}
                   </View>
-                ) : null}
-                {isToday && hasReady ? (
+                ) : agingCount > 0 ? (
                   <View
                     style={{
-                      position: "absolute",
-                      top: -4,
-                      right: -4,
-                      width: 10,
-                      height: 10,
-                      backgroundColor: theme.danger,
+                      width: 4,
+                      height: 4,
+                      backgroundColor: theme.gold,
+                      marginTop: "auto",
                       borderWidth: 1,
                       borderColor: theme.ink,
-                      borderRadius: 5,
                     }}
                   />
                 ) : null}
@@ -160,60 +168,48 @@ export function CaskCalendarScreen({ state }) {
       >
         {misc.upcoming}
       </Text>
-      {Object.keys(eventsByDay)
+
+      {/* Ready in this season */}
+      {Object.keys(readyInThisSeason)
         .sort((a, b) => +a - +b)
         .map((day) => (
-          <View
-            key={day}
-            style={[
-              {
-                flexDirection: "row",
-                gap: 10,
-                paddingHorizontal: 10,
-                paddingVertical: 8,
-                backgroundColor: theme.surface,
-                borderWidth: 2,
-                borderColor: theme.ink,
-                borderRadius: 2,
-                alignItems: "center",
-              },
-              pixelShadow(theme.line, 2),
-            ]}
-          >
-            <View
-              style={{
-                width: 36,
-                alignItems: "center",
-                backgroundColor: theme.ink,
-                paddingVertical: 4,
-                borderRadius: 2,
-              }}
-            >
-              <Text
-                style={{
-                  fontFamily: PIXEL,
-                  fontSize: 8,
-                  letterSpacing: 1.0,
-                  color: theme.surface,
-                }}
-              >
-                {misc.day3}
-              </Text>
-              <Text style={{ fontSize: 13, fontWeight: "800", color: theme.surface }}>{day}</Text>
-            </View>
-            <View style={{ flex: 1, minWidth: 0 }}>
-              {eventsByDay[day].map((e) => (
-                <Text key={e.uid} style={{ fontSize: 12, fontWeight: "700", color: theme.ink }}>
-                  🪵 {e.label[lang]}
-                  {e.progress >= 1 ? (
-                    <Text style={{ color: theme.accent }}>  ● {t("cask.ready")}</Text>
-                  ) : null}
-                </Text>
-              ))}
-            </View>
-          </View>
+          <UpcomingRow
+            key={`this-${day}`}
+            theme={theme}
+            label={`${t("day")} ${day}`}
+            year={null}
+            casks={readyInThisSeason[day]}
+            currentAbsDay={currentAbsDay}
+            lang={lang}
+            t={t}
+            misc={misc}
+          />
         ))}
-      {Object.keys(eventsByDay).length === 0 ? (
+
+      {/* Ready in other seasons */}
+      {readyElsewhere.map(({ cask, info }) => {
+        const yearTag =
+          info.yearOffset === 0
+            ? ""
+            : info.yearOffset > 0
+            ? ` (+${info.yearOffset}${misc.yearShort})`
+            : ` (${info.yearOffset}${misc.yearShort})`;
+        return (
+          <UpcomingRow
+            key={`else-${cask.uid}`}
+            theme={theme}
+            label={`${t(`season.${info.season}`).slice(0, 3)} · ${t("day")} ${info.day}${yearTag}`}
+            year={info.yearOffset}
+            casks={[cask]}
+            currentAbsDay={currentAbsDay}
+            lang={lang}
+            t={t}
+            misc={misc}
+          />
+        );
+      })}
+
+      {casks.length === 0 ? (
         <Text
           style={{
             fontFamily: PIXEL,
@@ -227,6 +223,63 @@ export function CaskCalendarScreen({ state }) {
         </Text>
       ) : null}
     </ScrollView>
+  );
+}
+
+function UpcomingRow({ theme, label, casks, currentAbsDay, lang, t, misc }) {
+  return (
+    <View
+      style={[
+        {
+          flexDirection: "row",
+          gap: 10,
+          paddingHorizontal: 10,
+          paddingVertical: 8,
+          backgroundColor: theme.surface,
+          borderWidth: 2,
+          borderColor: theme.ink,
+          borderRadius: 2,
+          alignItems: "center",
+        },
+        pixelShadow(theme.line, 2),
+      ]}
+    >
+      <View
+        style={{
+          minWidth: 60,
+          alignItems: "center",
+          backgroundColor: theme.ink,
+          paddingVertical: 4,
+          paddingHorizontal: 6,
+          borderRadius: 2,
+        }}
+      >
+        <Text
+          style={{
+            fontFamily: PIXEL,
+            fontSize: 9,
+            letterSpacing: 0.6,
+            color: theme.surface,
+            fontWeight: "700",
+          }}
+        >
+          {label}
+        </Text>
+      </View>
+      <View style={{ flex: 1, minWidth: 0 }}>
+        {casks.map((c) => {
+          const p = progressFor(c, currentAbsDay);
+          return (
+            <Text key={c.uid} style={{ fontSize: 12, fontWeight: "700", color: theme.ink }}>
+              🪵 {c.label[lang]}
+              {p >= 1 ? (
+                <Text style={{ color: theme.accent }}>  ● {t("cask.ready")}</Text>
+              ) : null}
+            </Text>
+          );
+        })}
+      </View>
+    </View>
   );
 }
 

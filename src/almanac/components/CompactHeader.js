@@ -9,6 +9,8 @@ export function CompactHeader({
   setLang,
   season,
   setSeason,
+  currentDay,
+  setCurrentDay,
   t,
   onSearchClick,
   searchActive,
@@ -101,32 +103,75 @@ export function CompactHeader({
           <View style={{ flex: 1, minWidth: 0 }}>
             <SeasonSegmented season={season} setSeason={setSeason} t={t} />
           </View>
-          <View style={{ alignItems: "flex-end" }}>
-            <Text
-              style={{
-                fontFamily: PIXEL,
-                fontSize: 10,
-                color: theme.ink2,
-                fontWeight: "700",
-                letterSpacing: 0.4,
-              }}
-            >
-              {t("day")} 14
-            </Text>
-            <Text
-              style={{
-                fontFamily: PIXEL,
-                fontSize: 10,
-                color: theme.ink3,
-                marginTop: 2,
-                letterSpacing: 0.4,
-              }}
-            >
-              ☀️ {t("weather.sunny")}
-            </Text>
-          </View>
+          <DayStepper currentDay={currentDay} setCurrentDay={setCurrentDay} t={t} />
         </View>
       ) : null}
+    </View>
+  );
+}
+
+function DayStepper({ currentDay, setCurrentDay, t }) {
+  const theme = useTheme();
+  const safeDay = Math.max(1, Math.min(28, currentDay ?? 14));
+  const stepperBtn = (label, onPress, disabled) => (
+    <Pressable
+      onPress={onPress}
+      disabled={disabled}
+      style={{
+        width: 22,
+        height: 22,
+        borderWidth: 1.5,
+        borderColor: disabled ? theme.line : theme.ink,
+        borderRadius: 2,
+        backgroundColor: theme.surface,
+        alignItems: "center",
+        justifyContent: "center",
+        opacity: disabled ? 0.4 : 1,
+      }}
+    >
+      <Text
+        style={{
+          fontFamily: PIXEL,
+          fontSize: 13,
+          fontWeight: "700",
+          color: theme.ink,
+          lineHeight: 14,
+        }}
+      >
+        {label}
+      </Text>
+    </Pressable>
+  );
+  return (
+    <View style={{ alignItems: "flex-end", gap: 2 }}>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+        {stepperBtn("−", () => setCurrentDay(safeDay - 1), safeDay <= 1)}
+        <View
+          style={{
+            minWidth: 56,
+            paddingVertical: 2,
+            paddingHorizontal: 6,
+            borderWidth: 1.5,
+            borderColor: theme.ink,
+            backgroundColor: theme.surface2,
+            borderRadius: 2,
+            alignItems: "center",
+          }}
+        >
+          <Text
+            style={{
+              fontFamily: PIXEL,
+              fontSize: 11,
+              color: theme.ink,
+              fontWeight: "700",
+              letterSpacing: 0.4,
+            }}
+          >
+            {t("day")} {safeDay}
+          </Text>
+        </View>
+        {stepperBtn("+", () => setCurrentDay(safeDay + 1), safeDay >= 28)}
+      </View>
     </View>
   );
 }

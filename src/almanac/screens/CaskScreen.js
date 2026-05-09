@@ -1,4 +1,11 @@
 import { Pressable, ScrollView, Text, View } from "react-native";
+import {
+  CASK_DURATION_DAYS,
+  fromAbsDay,
+  progressFor,
+  readyAbsDay,
+  stageFor,
+} from "../calendar";
 import { CardPixel, Chip, Coin, ProgressBar, pixelShadow } from "../components/primitives";
 import { useT } from "../i18n";
 import { useTheme } from "../theme";
@@ -6,7 +13,7 @@ import { useTheme } from "../theme";
 const PIXEL = "monospace";
 
 export function CaskScreen({ state, collectCask }) {
-  const { lang, casks } = state;
+  const { lang, casks, currentAbsDay } = state;
   const t = useT(lang);
   const theme = useTheme();
 
@@ -38,28 +45,46 @@ export function CaskScreen({ state, collectCask }) {
       ) : null}
 
       {casks.map((c) => (
-        <CaskCard key={c.uid} cask={c} lang={lang} t={t} onCollect={() => collectCask(c.uid)} />
+        <CaskCard
+          key={c.uid}
+          cask={c}
+          lang={lang}
+          t={t}
+          currentAbsDay={currentAbsDay}
+          onCollect={() => collectCask(c.uid)}
+        />
       ))}
     </ScrollView>
   );
 }
 
-function CaskCard({ cask, lang, t, onCollect }) {
+function CaskCard({ cask, lang, t, currentAbsDay, onCollect }) {
   const theme = useTheme();
-  const pct = Math.min(1, cask.progress);
+  const pct = progressFor(cask, currentAbsDay);
   const done = pct >= 1;
-  const remainSec = Math.ceil(Math.max(0, cask.durationMs * (1 - pct)) / 1000);
-  const inGameDays = Math.round(56 * pct);
-  const totalDays = 56;
-  const daysLeft = totalDays - inGameDays;
-  const stage = inGameDays >= 35 ? "iridium" : inGameDays >= 14 ? "gold" : "silver";
+  const startInfo = fromAbsDay(cask.startAbsDay);
+  const readyInfo = fromAbsDay(readyAbsDay(cask));
+  const daysRemaining = Math.max(0, readyAbsDay(cask) - currentAbsDay);
+  const totalDays = cask.durationDays || CASK_DURATION_DAYS;
+  const stage = stageFor(cask, currentAbsDay);
   const stageColor = { silver: "#b8c0c8", gold: theme.gold, iridium: "#a060c0" }[stage];
   const stageName = {
     silver: t("cask.stageIron"),
     gold: t("cask.stageGold"),
     iridium: t("cask.stageIridium"),
   }[stage];
-  const currentPrice = Math.round(cask.basePrice * (1 + pct));
+  const currentPrice = Math.round(cask.basePrice * (1 + pct * ((cask.mult || 2) - 1) / 1));
+
+  const formatDate = (info) => {
+    const seasonLabel = t(`season.${info.season}`);
+    const yearTag =
+      info.yearOffset === 0
+        ? ""
+        : info.yearOffset > 0
+        ? ` (+${info.yearOffset}${t("misc.yearShort")})`
+        : ` (${info.yearOffset}${t("misc.yearShort")})`;
+    return `${seasonLabel} · ${t("day")} ${info.day}${yearTag}`;
+  };
 
   return (
     <CardPixel style={{ padding: 12, backgroundColor: done ? theme.surface2 : theme.surface }}>
@@ -85,7 +110,7 @@ function CaskCard({ cask, lang, t, onCollect }) {
             {done ? (
               <Text style={{ color: theme.accent, fontWeight: "700" }}>✔ {t("cask.ready")}</Text>
             ) : (
-              `⏳ ${t("cask.ending")} ${daysLeft}${t("cask.day")}  (${remainSec}s demo)`
+              `⏳ ${t("cask.ending")} ${daysRemaining}${t("cask.day")}`
             )}
           </Text>
         </View>
@@ -140,9 +165,9 @@ function CaskCard({ cask, lang, t, onCollect }) {
         ))}
       </View>
       <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 10 }}>
-        {["0d", "14d", "35d", "56d"].map((label) => (
+        {["0d", "14d", "35d", `${totalDays}d`].map((label, idx) => (
           <Text
-            key={label}
+            key={idx}
             style={{ fontFamily: PIXEL, fontSize: 9, color: theme.ink2, letterSpacing: 0.4 }}
           >
             {label}
@@ -152,9 +177,6 @@ function CaskCard({ cask, lang, t, onCollect }) {
 
       <View
         style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
           paddingHorizontal: 10,
           paddingVertical: 8,
           backgroundColor: theme.surface2,
@@ -162,21 +184,62 @@ function CaskCard({ cask, lang, t, onCollect }) {
           borderColor: theme.ink3,
           borderStyle: "dashed",
           borderRadius: 2,
+          gap: 6,
         }}
       >
-        <View>
-          <Text
-            style={{
-              fontFamily: PIXEL,
-              fontSize: 9,
-              letterSpacing: 0.6,
-              color: theme.ink2,
-              textTransform: "uppercase",
-            }}
-          >
-            {t("cask.qualityAt")}
-          </Text>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginTop: 2 }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
+          <View style={{ flex: 1 }}>
+            <Text
+              style={{
+                fontFamily: PIXEL,
+                fontSize: 9,
+                letterSpacing: 0.6,
+                color: theme.ink2,
+                textTransform: "uppercase",
+              }}
+            >
+              {t("cask.started")}
+            </Text>
+            <Text style={{ fontFamily: PIXEL, fontSize: 11, color: theme.ink, fontWeight: "700" }}>
+              {formatDate(startInfo)}
+            </Text>
+          </View>
+          <View style={{ flex: 1, alignItems: "flex-end" }}>
+            <Text
+              style={{
+                fontFamily: PIXEL,
+                fontSize: 9,
+                letterSpacing: 0.6,
+                color: theme.ink2,
+                textTransform: "uppercase",
+              }}
+            >
+              {t("cask.readyOn")}
+            </Text>
+            <Text
+              style={{
+                fontFamily: PIXEL,
+                fontSize: 11,
+                color: done ? theme.accent : theme.ink,
+                fontWeight: "700",
+              }}
+            >
+              {formatDate(readyInfo)}
+            </Text>
+          </View>
+        </View>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            paddingTop: 6,
+            borderTopWidth: 1,
+            borderTopColor: theme.line,
+            borderStyle: "dashed",
+          }}
+        >
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
             <View
               style={{
                 width: 10,
@@ -188,19 +251,6 @@ function CaskCard({ cask, lang, t, onCollect }) {
             />
             <Text style={{ fontSize: 13, fontWeight: "700", color: theme.ink }}>{stageName}</Text>
           </View>
-        </View>
-        <View style={{ alignItems: "flex-end" }}>
-          <Text
-            style={{
-              fontFamily: PIXEL,
-              fontSize: 9,
-              letterSpacing: 0.6,
-              color: theme.ink2,
-              textTransform: "uppercase",
-            }}
-          >
-            {t("price")}
-          </Text>
           <Coin value={currentPrice} size={14} />
         </View>
       </View>

@@ -156,14 +156,10 @@ export function ProcessScreen({ state, addCask }) {
             isCask={machineId === "cask"}
             onStartCask={() => {
               addCask({
-                uid: "c" + Date.now() + Math.random().toString(36).slice(2, 6),
                 itemId: key,
                 label: r.out,
                 basePrice: src.sellPrice || src.price || 100,
                 mult: r.mult,
-                startTime: Date.now(),
-                durationMs: 60 * 1000,
-                progress: 0,
               });
             }}
           />
