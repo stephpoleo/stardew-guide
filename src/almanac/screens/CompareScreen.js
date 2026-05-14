@@ -17,6 +17,7 @@ export function CompareScreen({ state }) {
   const rows = seasonCrops.map((c) => {
     const keg = RECIPES.keg[c.id];
     const pres = RECIPES.preserves[c.id];
+    const bee = RECIPES.bee?.[c.id];
     const rawPrice = c.sellPrice;
     const kegPrice = keg?.mult
       ? Math.round(rawPrice * keg.mult)
@@ -28,10 +29,12 @@ export function CompareScreen({ state }) {
         ? rawPrice * pres.mult
         : rawPrice + pres.flat
       : null;
+    const beePrice = bee ? rawPrice + (bee.flat || 0) : null;
     const options = [
       { id: "raw", label: t("compare.raw"), price: rawPrice },
       keg && { id: "keg", label: keg.out[lang], price: kegPrice },
       pres && { id: "pres", label: pres.out[lang], price: Math.round(presPrice) },
+      bee && { id: "bee", label: bee.out[lang], price: beePrice },
     ].filter(Boolean);
     const best = options.reduce((a, b) => (b.price > a.price ? b : a), options[0]);
     return { crop: c, options, best };

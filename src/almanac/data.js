@@ -6,16 +6,24 @@ export const CROPS = [
   { id: "strawberry",  emoji: "🍓", name: { es: "Fresa",        en: "Strawberry" },     season: "spring", days: 8,  regrow: 4, seedCost: 100,  sellPrice: 120,  color: "#d94a5a" },
   { id: "potato",      emoji: "🥔", name: { es: "Patata",       en: "Potato" },         season: "spring", days: 6,  regrow: 0, seedCost: 50,   sellPrice: 80,   color: "#b8955c" },
   { id: "greenbean",   emoji: "🫛", name: { es: "Judía verde",  en: "Green Bean" },     season: "spring", days: 10, regrow: 3, seedCost: 60,   sellPrice: 40,   color: "#76a845" },
+  { id: "tulip",       emoji: "🌷", name: { es: "Tulipán",      en: "Tulip" },          season: "spring", days: 6,  regrow: 0, seedCost: 20,   sellPrice: 30,   honeyPrice: 160, color: "#d83a7a", flower: true },
+  { id: "bluejazz",    emoji: "🌸", name: { es: "Jazz azul",    en: "Blue Jazz" },      season: "spring", days: 7,  regrow: 0, seedCost: 30,   sellPrice: 50,   honeyPrice: 200, color: "#5c8ad4", flower: true },
   { id: "blueberry",   emoji: "🫐", name: { es: "Arándano",     en: "Blueberry" },      season: "summer", days: 13, regrow: 4, seedCost: 80,   sellPrice: 50,   color: "#4a6fb8" },
   { id: "melon",       emoji: "🍈", name: { es: "Melón",        en: "Melon" },          season: "summer", days: 12, regrow: 0, seedCost: 80,   sellPrice: 250,  color: "#c7d68a" },
   { id: "starfruit",   emoji: "⭐", name: { es: "Fruta estrella", en: "Starfruit" },    season: "summer", days: 13, regrow: 0, seedCost: 400,  sellPrice: 750,  color: "#e8c547" },
   { id: "hops",        emoji: "🌾", name: { es: "Lúpulo",       en: "Hops" },           season: "summer", days: 11, regrow: 1, seedCost: 60,   sellPrice: 25,   color: "#a8c060" },
   { id: "hotpepper",   emoji: "🌶️", name: { es: "Pimiento picante", en: "Hot Pepper" },season: "summer", days: 5,  regrow: 3, seedCost: 40,   sellPrice: 40,   color: "#c84a3a" },
+  { id: "summerspangle", emoji: "🌼", name: { es: "Lentejuela",  en: "Summer Spangle" }, season: "summer", days: 8,  regrow: 0, seedCost: 50,   sellPrice: 90,   honeyPrice: 280, color: "#e8c547", flower: true },
+  { id: "poppy",       emoji: "🌺", name: { es: "Amapola",      en: "Poppy" },          season: "summer", days: 7,  regrow: 0, seedCost: 100,  sellPrice: 140,  honeyPrice: 380, color: "#d63a3a", flower: true },
+  { id: "sunflower",   emoji: "🌻", name: { es: "Girasol",      en: "Sunflower" },      season: "summer", days: 8,  regrow: 0, seedCost: 200,  sellPrice: 80,   honeyPrice: 260, color: "#e8a847", flower: true,
+    note: { es: "También crece en otoño", en: "Also grows in fall" } },
   { id: "pumpkin",     emoji: "🎃", name: { es: "Calabaza",     en: "Pumpkin" },        season: "fall",   days: 13, regrow: 0, seedCost: 100,  sellPrice: 320,  color: "#d97a2a" },
   { id: "cranberry",   emoji: "🍒", name: { es: "Arándano rojo", en: "Cranberry" },     season: "fall",   days: 7,  regrow: 5, seedCost: 240,  sellPrice: 75,   color: "#b83a3a" },
   { id: "grape",       emoji: "🍇", name: { es: "Uva",          en: "Grape" },          season: "fall",   days: 10, regrow: 3, seedCost: 60,   sellPrice: 80,   color: "#7a4a9c" },
   { id: "artichoke",   emoji: "🌿", name: { es: "Alcachofa",    en: "Artichoke" },      season: "fall",   days: 8,  regrow: 0, seedCost: 30,   sellPrice: 160,  color: "#7a9848" },
   { id: "sweetgem",    emoji: "💎", name: { es: "Gema dulce",   en: "Sweet Gem" },      season: "fall",   days: 24, regrow: 0, seedCost: 1000, sellPrice: 3000, color: "#a060c0" },
+  { id: "fairyrose",   emoji: "🌹", name: { es: "Rosa hada",    en: "Fairy Rose" },     season: "fall",   days: 12, regrow: 0, seedCost: 200,  sellPrice: 290,  honeyPrice: 680, color: "#e060c0", flower: true,
+    note: { es: "★ La mejor miel del año", en: "★ Highest-value honey" } },
   { id: "wintroot",    emoji: "🥕", name: { es: "Raíz invernal", en: "Wintroot" },      season: "winter", days: 0,  regrow: 0, seedCost: 0,    sellPrice: 70,   color: "#c2a070",
     note: { es: "Se obtiene cavando", en: "Forage by digging" } },
   { id: "ancient",     emoji: "🍇", name: { es: "Fruta antigua", en: "Ancient Fruit" }, season: "all",    days: 28, regrow: 7, seedCost: 0,    sellPrice: 550,  color: "#7a4a9c",
@@ -123,6 +131,7 @@ export const MACHINES = [
   { id: "cheese",    emoji: "🧀", name: { es: "Prensa de queso",   en: "Cheese Press" }, desc: { es: "Leche → queso.",               en: "Milk → cheese." } },
   { id: "loom",      emoji: "🧵", name: { es: "Telar",             en: "Loom" },         desc: { es: "Lana → tela.",                 en: "Wool → cloth." } },
   { id: "oil",       emoji: "🫒", name: { es: "Prensa de aceite",  en: "Oil Maker" },    desc: { es: "Semillas → aceite.",           en: "Seeds → oil." } },
+  { id: "bee",       emoji: "🐝", name: { es: "Casa de abejas",    en: "Bee House" },    desc: { es: "Flor cercana → miel con sabor (cada 4 días).", en: "Adjacent flower → flavored honey (every 4 days)." } },
 ];
 
 export const RECIPES = {
@@ -158,6 +167,16 @@ export const RECIPES = {
   },
   loom: {
     wool: { out: { es: "Tela", en: "Cloth" }, flat: 470, hours: 4 },
+  },
+  bee: {
+    // flat is the honey markup over the flower's sell price.
+    // Formula: honey price = 100 + 2 × flower price.
+    tulip:         { out: { es: "Miel de tulipán",   en: "Tulip Honey" },         flat: 130, hours: 96 },
+    bluejazz:      { out: { es: "Miel de jazz azul", en: "Blue Jazz Honey" },     flat: 150, hours: 96 },
+    summerspangle: { out: { es: "Miel de lentejuela",en: "Summer Spangle Honey" }, flat: 190, hours: 96 },
+    sunflower:     { out: { es: "Miel de girasol",   en: "Sunflower Honey" },     flat: 180, hours: 96 },
+    poppy:         { out: { es: "Miel de amapola",   en: "Poppy Honey" },         flat: 240, hours: 96 },
+    fairyrose:     { out: { es: "Miel de rosa hada", en: "Fairy Rose Honey" },    flat: 390, hours: 96 },
   },
 };
 

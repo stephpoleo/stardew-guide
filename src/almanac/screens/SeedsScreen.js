@@ -121,9 +121,10 @@ function CropRow({ crop, rank, lang, t }) {
             {crop.regrow > 0 ? `${t("seeds.regrow")} ${crop.regrow}d` : t("seeds.none")}
           </Text>
         </View>
-        <View style={{ flexDirection: "row", gap: 6, marginTop: 6 }}>
+        <View style={{ flexDirection: "row", gap: 6, marginTop: 6, flexWrap: "wrap" }}>
           <Chip tone="neutral">{`${t("seedCost")}: ${crop.seedCost}g`}</Chip>
           <Chip tone="gold">{`${t("price")}: ${crop.sellPrice}g`}</Chip>
+          {crop.honeyPrice ? <Chip tone="accent">{`🍯 ${crop.honeyPrice}g`}</Chip> : null}
         </View>
       </View>
       <View style={{ alignItems: "flex-end" }}>
